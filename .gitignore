@@ -1,0 +1,24 @@
+# Created by .ignore support plugin (hsz.mobi)
+### SCons template
+# for projects that use SCons for building: http://http://www.scons.org/
+.sconsign.dblite
+.sconf_temp
+### C template
+# Object files
+*.o
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Debug files
+*.dSYM/
+*.su
+/config.log
+/src/fceux
