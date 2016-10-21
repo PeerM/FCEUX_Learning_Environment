@@ -22,22 +22,19 @@ namespace nes {
 #define ACT_NOOP      0  // 0
 #define ACT_A         1  // 1
 #define ACT_B	      2  // 2
-#define ACT_UP        3  // 16
-#define ACT_RIGHT     4  // 128
-#define ACT_LEFT      5  // 64
-#define ACT_DOWN      6  // 32
-#define ACT_A_UP      7  // 17
-#define ACT_A_RIGHT   8  // 129
-#define ACT_A_LEFT    9  // 65
-#define ACT_A_DOWN    10 // 33
-#define ACT_B_UP      11 // 18
-#define ACT_B_RIGHT   12 // 130
-#define ACT_B_LEFT    13 // 66
-#define ACT_B_DOWN    14 // 34
-#define ACT_RESET     15 // note: we use SYSTEM_RESET instead to reset the environment.
-#define ACT_UNDEFINED 16
-#define ACT_RANDOM    17
-#define ACT_SELECT    18 // 8
+#define ACT_UP        16  // 16
+#define ACT_RIGHT     128  // 128
+#define ACT_LEFT      64  // 64
+#define ACT_DOWN      32  // 32
+#define ACT_A_UP      17  // 17
+#define ACT_A_RIGHT   129  // 129
+#define ACT_A_LEFT    65  // 65
+#define ACT_A_DOWN    33 // 33
+#define ACT_B_UP      18 // 18
+#define ACT_B_RIGHT   130 // 130
+#define ACT_B_LEFT    66 // 66
+#define ACT_B_DOWN    34 // 34
+#define ACT_SELECT    8 // 8
 
 typedef unsigned char byte_t;
 typedef unsigned char pixel_t;

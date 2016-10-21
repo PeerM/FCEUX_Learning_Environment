@@ -151,7 +151,7 @@ void NESInterface::Impl::reset_game() {
 
 	// Run a few frames first to get to the startup screen.
 	for (int i = 0; i<60; i++) {
-		NESInterface::Impl::act(ACT_NOOP);
+		NESInterface::Impl::act(0);
 	}
 
 	// Hit the start button...
@@ -295,78 +295,8 @@ int NESInterface::Impl::act(int action) {
 	// Update game state.
 	game_state = FCEU_CheatGetByte(0x0770);
 
-	// Set the action. No idea whether this will work with other input configurations!
-	switch (action) {
-
-		case ACT_NOOP:
-			nes_input = 0;
-			break;
-
-		case ACT_A:
-			nes_input = 1;
-			break;
-
-		case ACT_B:
-			nes_input = 2;
-			break;
-
-		case ACT_UP:
-			nes_input = 16;
-			break;
-
-		case ACT_RIGHT:
-			nes_input = 128;
-			break;
-
-		case ACT_LEFT:
-			nes_input = 64;
-			break;
-
-		case ACT_DOWN:
-			nes_input = 32;
-			break;
-
-		case ACT_A_UP:
-			nes_input = 17;
-			break;
-
-		case ACT_A_RIGHT:
-			nes_input = 129;
-			break;
-
-		case ACT_A_LEFT:
-			nes_input = 65;
-			break;
-
-		case ACT_A_DOWN:
-			nes_input = 33;
-			break;
-
-		case ACT_B_UP:
-			nes_input = 18;
-			break;
-
-		case ACT_B_RIGHT:
-			nes_input = 130;
-			break;
-
-		case ACT_B_LEFT:
-			nes_input = 66;
-			break;
-
-		case ACT_B_DOWN:
-			nes_input = 34;
-			break;
-
-		case ACT_SELECT:
-			nes_input = 8;
-			break;
-
-		default:
-			nes_input = 0;
-			printf("ERROR: Undefined action sent to nes_act!");
-			break;
-	}
+	// Set the action.
+    nes_input = action;
 
 	uint8 *gfx;
 	int32 *sound;
