@@ -91,6 +91,8 @@ class NESInterface::Impl {
         // restores state from a string
         void restoreSnapshot(const std::string snapshot);
 
+        void getRam(unsigned char *ram);
+
         // Get the RGB data from the raw screen.
         void fillRGBfromPalette(unsigned char *raw_screen, unsigned char *rgb_screen, int raw_screen_size);
 
@@ -196,6 +198,15 @@ const int NESInterface::Impl::getScreenHeight() const {
 
 const int NESInterface::Impl::getScreenWidth() const {
 	return NES_SCREEN_WIDTH;
+}
+
+void NESInterface::Impl::getRam(unsigned char *ram){
+	int range_start = 0;
+	int range_size = 2048;
+
+	for(int i=0;i<range_size;i++) {
+		ram[i] = FCEU_CheatGetByte(range_start+i);
+	}
 }
 
 void NESInterface::Impl::fillRGBfromPalette(unsigned char *raw_screen, unsigned char *rgb_screen, int raw_screen_size) {
@@ -526,6 +537,10 @@ const int NESInterface::getScreenHeight() const {
 
 const int NESInterface::getScreenWidth() const {
 	return m_pimpl->getScreenWidth();
+}
+
+void NESInterface::getRam(unsigned char *ram) {
+        m_pimpl->getRam(ram);
 }
 
 void NESInterface::fillRGBfromPalette(unsigned char *raw_screen, unsigned char *rgb_screen, int raw_screen_size) {

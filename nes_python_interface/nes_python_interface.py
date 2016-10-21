@@ -106,7 +106,7 @@ class NESInterface(object):
         """
         if(screen_data is None):
             screen_data = np.zeros(self.width*self.height, dtype=np.uint8)
-            
+
         nes_lib.getScreen.argtypes = [c_void_p, c_void_p, c_int]
         nes_lib.getScreen.restype = None
         nes_lib.getScreen(self.obj, as_ctypes(screen_data), c_int(screen_data.size))
@@ -147,7 +147,7 @@ class NESInterface(object):
         return screen_data
 
     def getRAMSize(self):
-        return nes_lib.getRAMSize(self.obj)
+        return 2048
 
     def getRAM(self, ram=None):
         """This function grabs the RAM.
@@ -156,10 +156,12 @@ class NESInterface(object):
         Notice: It must be ram_size where ram_size can be retrieved via the getRAMSize function.
         If it is None,  then this function will initialize it.
         """
-        if(ram is None):
-            ram_size = nes_lib.getRAMSize(self.obj)
+        if (ram is None):
+            ram_size = self.getRAMSize()
             ram = np.zeros(ram_size, dtype=np.uint8)
-        nes_lib.getRAM(self.obj, as_ctypes(ram))
+        nes_lib.getRam.argtypes = [c_void_p, c_void_p]
+        nes_lib.getRam.restype = None
+        nes_lib.getRam(self.obj, as_ctypes(ram))
         return ram
 
     def saveScreenPNG(self, filename):

@@ -116,7 +116,9 @@ class NESInterface {
 
         /** Sets the state from a string*/
         void restoreSnapshot(const std::string snapshot);
-        
+
+        void getRam(unsigned char *ram);
+
         /** Converts a pixel to its RGB value. */
         static void getRGB(
             unsigned char pixel, 

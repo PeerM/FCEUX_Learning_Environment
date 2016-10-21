@@ -84,6 +84,10 @@ void restoreSnapshot(nes::NESInterface *nes, char *snapshot) {
         nes->restoreSnapshot(snapshot);
 }
 
+void getRam(nes::NESInterface *nes, unsigned char *ram){
+        nes->getRam(ram);
+}
+
 void fillRGBfromPalette(nes::NESInterface *nes, unsigned char *raw_screen, unsigned char *rgb_screen, int raw_screen_size) {
         nes->fillRGBfromPalette(raw_screen, rgb_screen, raw_screen_size);
 }
