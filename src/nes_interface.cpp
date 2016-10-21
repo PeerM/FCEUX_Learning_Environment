@@ -206,9 +206,9 @@ void NESInterface::Impl::fillRGBfromPalette(unsigned char *raw_screen, unsigned 
                 NESInterface::getRGB(raw_screen[i], &r, &g, &b);
 
                 // Man, this bastard took a long time to figure out!
-                rgb_screen[3*i] = b;
+                rgb_screen[3*i] = r;
                 rgb_screen[(3*i)+1] = g;
-                rgb_screen[(3*i)+2] = r;
+                rgb_screen[(3*i)+2] = b;
         }
 }
 
