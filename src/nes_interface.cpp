@@ -306,8 +306,9 @@ int NESInterface::Impl::act(int action) {
 	// Main loop.
 	episode_frame_number++;
 	FCEUI_Emulate(&gfx, &sound, &ssize, fskipc);
-	FCEUD_Update(gfx, sound, ssize);
-
+#ifdef UPDATEGUI
+    FCEUD_Update(gfx, sound, ssize);
+#endif
 	// Get score...
 	int new_score = (FCEU_CheatGetByte(0x07dd) * 1000000) +
 			(FCEU_CheatGetByte(0x07de) * 100000) +
