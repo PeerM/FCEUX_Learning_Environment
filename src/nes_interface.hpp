@@ -65,6 +65,9 @@ class NESInterface {
             buttons on the game over screen. */
         int act(int action);
 
+        // renders the last frame, from act, to the GUI
+        void render();
+
         /** Returns the number of legal actions. */
         int getNumLegalActions();
 

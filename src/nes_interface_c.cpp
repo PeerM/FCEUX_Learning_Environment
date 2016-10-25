@@ -20,6 +20,10 @@ int act(nes::NESInterface *nes, int action) {
         return nes->act(action);
 }
 
+void render(nes::NESInterface *nes) {
+        nes->render();
+}
+
 int getNumLegalActions(nes::NESInterface *nes) {
         return nes->getNumLegalActions();
 }

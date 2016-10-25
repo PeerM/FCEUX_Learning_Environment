@@ -19,7 +19,9 @@ extern "C" {
         bool gameOver(nes::NESInterface *nes);
 
         int act(nes::NESInterface *nes, int action);
-        
+
+        void render(nes::NESInterface *nes);
+
         int getNumLegalActions(nes::NESInterface *nes);
 
         void getLegalActionSet(nes::NESInterface *nes, int legal_actions[]);

@@ -43,6 +43,9 @@ class NESInterface::Impl {
         // buttons on the game over screen.
         int act(int action);
 
+        // renders the last frame, from act, to the GUI
+        void render();
+
         // Returns the number of legal actions.
         int getNumLegalActions();
 
@@ -107,6 +110,10 @@ class NESInterface::Impl {
         int remaining_lives;
         int game_state;
         int episode_frame_number;
+        uint8 *gfx;
+	    int32 *sound;
+	    int32 ssize;
+	    bool ran_once;
 };
 
 
@@ -298,17 +305,16 @@ int NESInterface::Impl::act(int action) {
 	// Set the action.
     nes_input = action;
 
-	uint8 *gfx;
-	int32 *sound;
-	int32 ssize;
+//	uint8 *gfx;
+//	int32 *sound;
+//	int32 ssize;
 	static int fskipc = 0;
 
 	// Main loop.
 	episode_frame_number++;
 	FCEUI_Emulate(&gfx, &sound, &ssize, fskipc);
-#ifdef UPDATEGUI
-    FCEUD_Update(gfx, sound, ssize);
-#endif
+    ran_once = true;
+
 	// Get score...
 	int new_score = (FCEU_CheatGetByte(0x07dd) * 1000000) +
 			(FCEU_CheatGetByte(0x07de) * 100000) +
@@ -345,6 +351,13 @@ int NESInterface::Impl::act(int action) {
 	return reward;
 }
 
+void NESInterface::Impl::render() {
+    if(ran_once){
+        FCEUD_Update(gfx, sound, ssize);
+    }
+}
+
+
 NESInterface::Impl::Impl(const std::string &rom_file) :
     m_episode_score(0),
     m_display_active(false),
@@ -353,9 +366,9 @@ NESInterface::Impl::Impl(const std::string &rom_file) :
 	current_x(0),
 	remaining_lives(0),
 	game_state(0),
-	episode_frame_number(0)
+	episode_frame_number(0),
+	ran_once(false)
 {
-
 	// Initialize some configuration variables.
 	static int inited = 0;
 	noGui = 1;
@@ -516,6 +529,10 @@ const int NESInterface::getCurrentScore() const {
 
 int NESInterface::act(int action) {
     return m_pimpl->act(action);
+}
+
+void NESInterface::render() {
+    m_pimpl->render();
 }
 
 NESInterface::NESInterface(const std::string &rom_file) :

@@ -45,6 +45,11 @@ class NESInterface(object):
         nes_lib.act.restype = c_int
         return nes_lib.act(self.obj, int(action))
 
+    def render(self):
+        nes_lib.act.argtypes = [c_void_p]
+        nes_lib.act.restype = None
+        return nes_lib.render(self.obj)
+
     def game_over(self):
         nes_lib.gameOver.argtypes = [c_void_p]
         nes_lib.gameOver.restype = c_bool
