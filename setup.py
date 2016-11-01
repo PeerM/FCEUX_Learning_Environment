@@ -7,14 +7,14 @@ if not os.path.isfile(nes_c_lib):
     'built the FCEUX Learning Environment using scons.'%(nes_c_lib))
   sys.exit()
 
-setup(name = 'nes_python_interface',
-      version='0.0.5',
+setup(name = 'hsa_nes_python_interface',
+      version='0.0.6',
       description = 'FCEUX Learning Environment Python Interface',
-      url='https://github.com/ehrenbrav/FCEUX_Learning_Environment',
-      author='Ben Goodrich, Ehren J. Brav',
+      url='https://github.com/PeerM/FCEUX_Learning_Environment',
+      author='Ben Goodrich, Ehren J. Brav, F. Mathia',
       license='GPL',
-      packages=['nes_python_interface'],
-      package_dir={'nes_python_interface': 'nes_python_interface'},
+      packages=['hsa_nes_python_interface'],
+      package_dir={'hsa_nes_python_interface': 'nes_python_interface'},
       package_data={'nes_python_interface': ['libfceux.so']})
 
 
