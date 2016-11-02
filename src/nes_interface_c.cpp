@@ -1,7 +1,7 @@
 #include "nes_interface_c.h"
 
-nes::NESInterface *NESInterface(char* ROM) {
-        return new nes::NESInterface(ROM);
+nes::NESInterface *NESInterface(char* ROM, bool c_eb_compatible) {
+        return new nes::NESInterface(ROM, c_eb_compatible);
 }
 
 void delete_NES(nes::NESInterface *nes) {

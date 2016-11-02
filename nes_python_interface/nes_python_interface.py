@@ -11,12 +11,18 @@ import os
 
 nes_lib = cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), 'libfceux.so'))
 
+
 class NESInterface(object):
-    def __init__(self, rom):
-        nes_lib.NESInterface.argtypes = [c_char_p]
+    def __init__(self, rom, eb_compatible=True, auto_render_period=-1):
+        if eb_compatible:
+            auto_render_period = 60
+        self.should_render = auto_render_period != -1
+        self.auto_render_period = auto_render_period
+        self.render_action_counter = 0
+        nes_lib.NESInterface.argtypes = [c_char_p, c_bool]
         nes_lib.NESInterface.restype = c_void_p
         byte_string_rom = rom.encode('utf-8')
-        self.obj = nes_lib.NESInterface(byte_string_rom)
+        self.obj = nes_lib.NESInterface(byte_string_rom, eb_compatible)
         self.width, self.height = self.getScreenDims()
 
     # def getString(self, key):
@@ -43,7 +49,14 @@ class NESInterface(object):
     def act(self, action):
         nes_lib.act.argtypes = [c_void_p, c_int]
         nes_lib.act.restype = c_int
-        return nes_lib.act(self.obj, int(action))
+        reward = nes_lib.act(self.obj, int(action))
+        if self.should_render:
+            if self.render_action_counter % self.auto_render_period == 0:
+                self.render()
+                self.render_action_counter = 0
+            self.render_action_counter += 1
+
+        return reward
 
     def render(self):
         nes_lib.act.argtypes = [c_void_p]
@@ -109,8 +122,8 @@ class NESInterface(object):
         If it is None,  then this function will initialize it
         Note: This is the raw pixel values,  before any RGB palette transformation takes place
         """
-        if(screen_data is None):
-            screen_data = np.zeros(self.width*self.height, dtype=np.uint8)
+        if (screen_data is None):
+            screen_data = np.zeros(self.width * self.height, dtype=np.uint8)
 
         nes_lib.getScreen.argtypes = [c_void_p, c_void_p, c_int]
         nes_lib.getScreen.restype = None
@@ -123,7 +136,7 @@ class NESInterface(object):
         screen_data = np.empty((height,width,3), dtype=np.uint8)
         If it is None,  then this function will initialize it.
         """
-        if(screen_data is None):
+        if (screen_data is None):
             screen_data = np.empty((self.height, self.width, 1), dtype=np.uint8)
         nes_lib.getScreen.argtypes = [c_void_p, c_void_p, c_int]
         nes_lib.getScreen.restype = None
@@ -144,7 +157,7 @@ class NESInterface(object):
         screen_data = np.empty((height,width,1), dtype=np.uint8)
         If it is None,  then this function will initialize it.
         """
-        if(screen_data is None):
+        if (screen_data is None):
             screen_data = np.empty((self.height, self.width, 1), dtype=np.uint8)
         nes_lib.getScreen.argtypes = [c_void_p, c_void_p, c_int]
         nes_lib.getScreen.restype = None

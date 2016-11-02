@@ -49,7 +49,7 @@ class NESInterface {
             that will randomly (uniform) alternate between a number of
             different ROM files. The syntax is:  
                 <rom path>+<rom path>+... */
-        NESInterface(const std::string &rom_file);
+        NESInterface(const std::string &rom_file, bool c_eb_compatible);
         
         /** Unload the emulator. */
         ~NESInterface();

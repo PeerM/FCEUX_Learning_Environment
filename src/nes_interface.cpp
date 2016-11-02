@@ -29,7 +29,7 @@ class NESInterface::Impl {
     public:
 
         // create an NESInterface. This routine is not threadsafe!
-        Impl(const std::string &rom_file);
+        Impl(const std::string &rom_file, bool c_eb_compatible);
         ~Impl();
 
         // Resets the game
@@ -114,6 +114,7 @@ class NESInterface::Impl {
 	    int32 *sound;
 	    int32 ssize;
 	    bool ran_once;
+	    bool eb_compatible;
 };
 
 
@@ -158,7 +159,7 @@ void NESInterface::Impl::reset_game() {
 
 	// Run a few frames first to get to the startup screen.
 	for (int i = 0; i<60; i++) {
-		NESInterface::Impl::act(0);
+		NESInterface::Impl::act(ACT_NOOP);
 	}
 
 	// Hit the start button...
@@ -223,10 +224,18 @@ void NESInterface::Impl::fillRGBfromPalette(unsigned char *raw_screen, unsigned 
                 unsigned char r, g, b;
                 NESInterface::getRGB(raw_screen[i], &r, &g, &b);
 
-                // Man, this bastard took a long time to figure out!
-                rgb_screen[3*i] = r;
-                rgb_screen[(3*i)+1] = g;
-                rgb_screen[(3*i)+2] = b;
+                if(eb_compatible){
+                    // Man, this bastard took a long time to figure out! -eb
+                    rgb_screen[3*i] = b;
+                    rgb_screen[(3*i)+1] = g;
+                    rgb_screen[(3*i)+2] = r;
+                }
+                else{
+                    // better RGB
+                    rgb_screen[3*i] = r;
+                    rgb_screen[(3*i)+1] = g;
+                    rgb_screen[(3*i)+2] = b;
+                }
         }
 }
 
@@ -358,7 +367,7 @@ void NESInterface::Impl::render() {
 }
 
 
-NESInterface::Impl::Impl(const std::string &rom_file) :
+NESInterface::Impl::Impl(const std::string &rom_file, bool c_eb_compatible) :
     m_episode_score(0),
     m_display_active(false),
 	nes_input(0),
@@ -367,7 +376,8 @@ NESInterface::Impl::Impl(const std::string &rom_file) :
 	remaining_lives(0),
 	game_state(0),
 	episode_frame_number(0),
-	ran_once(false)
+	ran_once(false),
+	eb_compatible(c_eb_compatible)
 {
 	// Initialize some configuration variables.
 	static int inited = 0;
@@ -535,8 +545,8 @@ void NESInterface::render() {
     m_pimpl->render();
 }
 
-NESInterface::NESInterface(const std::string &rom_file) :
-    m_pimpl(new NESInterface::Impl(rom_file)) {
+NESInterface::NESInterface(const std::string &rom_file, bool c_eb_compatible) :
+    m_pimpl(new NESInterface::Impl(rom_file, c_eb_compatible)) {
 
 }
 
