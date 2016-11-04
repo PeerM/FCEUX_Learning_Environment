@@ -66,8 +66,8 @@ nes_lib.delete_NES.restype = None
 
 class NESInterface(object):
     def __init__(self, rom, eb_compatible=True, auto_render_period=-1):
-        if eb_compatible:
-            auto_render_period = 60
+        if eb_compatible and auto_render_period == -1:
+            auto_render_period = 120
         self.should_render = auto_render_period != -1
         self.auto_render_period = auto_render_period
         self.render_action_counter = 0
