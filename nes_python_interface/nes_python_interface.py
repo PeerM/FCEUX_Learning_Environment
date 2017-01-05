@@ -8,6 +8,7 @@ from ctypes import *
 import numpy as np
 from numpy.ctypeslib import as_ctypes
 import os
+import typing
 
 nes_lib = cdll.LoadLibrary(os.path.join(os.path.dirname(__file__), 'libfceux.so'))
 
@@ -65,7 +66,8 @@ nes_lib.delete_NES.argtypes = [c_void_p]
 nes_lib.delete_NES.restype = None
 
 class NESInterface(object):
-    def __init__(self, rom, eb_compatible=True, auto_render_period=-1):
+    def __init__(self, rom, eb_compatible=True, auto_render_period=-1, reward_function: typing.Union[str, typing.Callable] = "ehrenbrav"):
+        self.reward_function = reward_function
         if eb_compatible and auto_render_period == -1:
             auto_render_period = 120
         self.should_render = auto_render_period != -1
@@ -104,7 +106,10 @@ class NESInterface(object):
                 self.render_action_counter = 0
             self.render_action_counter += 1
 
-        return reward
+        if callable(self.reward_function):
+            return self.reward_function(self.getRAM())
+        else:
+            return reward
 
     def render(self):
         return nes_lib.render(self.obj)
