@@ -65,9 +65,40 @@ nes_lib.loadState.restype = c_bool
 nes_lib.delete_NES.argtypes = [c_void_p]
 nes_lib.delete_NES.restype = None
 
+
+class RewardTypes:
+    ehrenbrav = "ehrenbrav"
+    """use the C++ version from ehrenbrav """
+    simple_function = "simple_function"
+    """a pure function should be past alongside """
+    factory = "factory"
+    """a Factory that returns a stateful Callable should be past alongside"""
+
+
 class NESInterface(object):
-    def __init__(self, rom, eb_compatible=True, auto_render_period=-1, reward_function: typing.Union[str, typing.Callable] = "ehrenbrav"):
-        self.reward_function = reward_function
+    def __init__(self, rom, eb_compatible=True, auto_render_period=-1,
+                 reward_type=RewardTypes.ehrenbrav,
+                 reward_function: typing.Callable = None,
+                 reward_function_factory: typing.Callable = None):
+        self.reward_type = reward_type
+        if reward_type == RewardTypes.ehrenbrav:
+            assert reward_function is None
+            assert reward_function_factory is None
+            self.reward_function = None
+            self.reward_function_factory = None
+        elif reward_type == RewardTypes.simple_function:
+            assert reward_function is not None
+            assert reward_function_factory is None
+            self.reward_function = reward_function
+            self.reward_function_factory = None
+        elif reward_type == RewardTypes.factory:
+            assert reward_function is None
+            assert reward_function_factory is not None
+            self.reward_function_factory = reward_function_factory
+            self.reward_function = reward_function_factory()
+        else:
+            raise ValueError("unknown reward_type", reward_type)
+
         if eb_compatible and auto_render_period == -1:
             auto_render_period = 120
         self.should_render = auto_render_period != -1
@@ -77,27 +108,6 @@ class NESInterface(object):
         self.obj = nes_lib.NESInterface(byte_string_rom, eb_compatible)
         self.width, self.height = self.getScreenDims()
 
-    # def getString(self, key):
-    #     return nes_lib.getString(self.obj, key)
-    # def getInt(self, key):
-    #     return nes_lib.getInt(self.obj, key)
-    # def getBool(self, key):
-    #     return nes_lib.getBool(self.obj, key)
-    # def getFloat(self, key):
-    #     return nes_lib.getFloat(self.obj, key)
-
-    # def setString(self, key, value):
-    #   nes_lib.setString(self.obj, key, value)
-    # def setInt(self, key, value):
-    #   nes_lib.setInt(self.obj, key, value)
-    # def setBool(self, key, value):
-    #   nes_lib.setBool(self.obj, key, value)
-    # def setFloat(self, key, value):
-    #   nes_lib.setFloat(self.obj, key, value)
-
-    # def loadROM(self, rom_file):
-    #     nes_lib.loadROM(self.obj, rom_file)
-
     def act(self, action):
         reward = nes_lib.act(self.obj, int(action))
         if self.should_render:
@@ -106,7 +116,7 @@ class NESInterface(object):
                 self.render_action_counter = 0
             self.render_action_counter += 1
 
-        if callable(self.reward_function):
+        if self.reward_function is not None:
             return self.reward_function(self.getRAM())
         else:
             return reward
@@ -118,6 +128,8 @@ class NESInterface(object):
         return nes_lib.gameOver(self.obj)
 
     def reset_game(self):
+        if self.reward_type == RewardTypes.factory:
+            self.reward_function = self.reward_function_factory()
         nes_lib.resetGame(self.obj)
 
     def getLegalActionSet(self):
