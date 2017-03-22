@@ -112,7 +112,7 @@ class NESInterface {
         bool loadState();
 
         /** Gets a state as a string. */
-        std::string getSnapshot() const;
+        void getSnapshot(const std::string snapshot);
 
         /** Sets the state from a string*/
         void restoreSnapshot(const std::string snapshot);

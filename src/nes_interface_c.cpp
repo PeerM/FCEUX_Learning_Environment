@@ -80,9 +80,12 @@ bool loadState(nes::NESInterface *nes) {
         return nes->loadState();
 }
 
-std::string getSnapshot(nes::NESInterface *nes) {
-        return nes->getSnapshot();
+void getSnapshot(nes::NESInterface *nes, char *snapshot) {
+        nes->getSnapshot(snapshot);
 }
+//void getSnapshot(nes::NESInterface *nes, char *snapshot) {
+//        nes->getSnapshot(snapshot);
+//}
 
 void restoreSnapshot(nes::NESInterface *nes, char *snapshot) {
         nes->restoreSnapshot(snapshot);

@@ -65,6 +65,12 @@ nes_lib.loadState.restype = c_bool
 nes_lib.delete_NES.argtypes = [c_void_p]
 nes_lib.delete_NES.restype = None
 
+nes_lib.getSnapshot.argtypes = [c_void_p, c_char_p]
+nes_lib.getSnapshot.restype = None
+
+nes_lib.restoreSnapshot.argtypes = [c_void_p, c_char_p]
+nes_lib.restoreSnapshot.restype = None
+
 
 class RewardTypes:
     ehrenbrav = "ehrenbrav"
@@ -230,6 +236,12 @@ class NESInterface(object):
     def loadState(self):
         """Loads the state of the system"""
         return nes_lib.loadState(self.obj)
+
+    def getSnapshot(self, snapshot_name):
+        return nes_lib.getSnapshot(self.obj, snapshot_name)
+
+    def restoreShapshot(self, snapshot_name):
+        return nes_lib.restoreSnapshot(self.obj, snapshot_name)
 
     def cloneState(self):
         """This makes a copy of the environment state. This copy does *not*

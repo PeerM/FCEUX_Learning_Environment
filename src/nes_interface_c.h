@@ -50,7 +50,7 @@ extern "C" {
 
         bool loadState(nes::NESInterface *nes);
 
-        std::string getSnapshot(nes::NESInterface *nes);
+        void getSnapshot(nes::NESInterface *nes, char *snapshot);
 
         void restoreSnapshot(nes::NESInterface *nes, char *snapshot);
 
