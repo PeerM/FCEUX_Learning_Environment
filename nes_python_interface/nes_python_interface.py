@@ -255,20 +255,14 @@ class NESInterface(object):
         include pseudorandomness, making it suitable for planning
         purposes. By contrast, see cloneSystemState.
         """
+        # hopefully this will not go wrong at some point or another
         external_buffer = buffer is not None
         if not external_buffer:
-            if self.stateSize is None:
-                buffer = np.zeros(2 ** 17, np.uint8)
-            else:
-                buffer = np.empty(self.stateSize, np.uint8)
+            buffer = np.empty(79304, np.uint8)
         used_size = nes_lib.cloneState(self.obj, as_ctypes(buffer))
 
         if not external_buffer:
-            if self.stateSize is None:
-                self.stateSize = used_size
-                return np.array(buffer[:used_size], dtype=np.uint8)
-            else:
-                return buffer
+            return buffer
         else:
             return used_size
 
