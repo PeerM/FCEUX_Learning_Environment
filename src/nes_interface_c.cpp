@@ -84,6 +84,10 @@ int cloneState(nes::NESInterface *nes, unsigned char *buf){
         return nes->cloneState(buf);
 }
 
+bool restoreState(nes::NESInterface *nes, unsigned char *buf, int size){
+        return nes->restoreState(buf, size);
+}
+
 void getSnapshot(nes::NESInterface *nes, char *snapshot) {
         nes->getSnapshot(snapshot);
 }

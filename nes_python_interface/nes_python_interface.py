@@ -65,6 +65,9 @@ nes_lib.loadState.restype = c_bool
 nes_lib.cloneState.argtypes = [c_void_p, c_void_p]
 nes_lib.cloneState.restype = c_int
 
+nes_lib.restoreState.argtypes = [c_void_p, c_void_p, c_int]
+nes_lib.restoreState.restype = c_bool
+
 nes_lib.delete_NES.argtypes = [c_void_p]
 nes_lib.delete_NES.restype = None
 
@@ -116,6 +119,7 @@ class NESInterface(object):
         byte_string_rom = rom.encode('utf-8')
         self.obj = nes_lib.NESInterface(byte_string_rom, eb_compatible)
         self.width, self.height = self.getScreenDims()
+        self.stateSize = None
 
     def act(self, action):
         reward = nes_lib.act(self.obj, int(action))
@@ -253,21 +257,26 @@ class NESInterface(object):
         """
         external_buffer = buffer is not None
         if not external_buffer:
-            buffer = np.zeros(2 ** 17, np.uint8)
+            if self.stateSize is None:
+                buffer = np.zeros(2 ** 17, np.uint8)
+            else:
+                buffer = np.empty(self.stateSize, np.uint8)
         used_size = nes_lib.cloneState(self.obj, as_ctypes(buffer))
 
         if not external_buffer:
-            return np.array(buffer[:used_size],dtype=np.uint8)
+            if self.stateSize is None:
+                self.stateSize = used_size
+                return np.array(buffer[:used_size], dtype=np.uint8)
+            else:
+                return buffer
         else:
             return used_size
 
     def restoreState(self, state):
-        """Reverse operation of cloneState(). This does not restore
-        pseudorandomness, so that repeated calls to restoreState() in
-        the stochastic controls setting will not lead to the same
-        outcomes.  By contrast, see restoreSystemState.
+        """state must be a numpy array with the right shape
         """
-        nes_lib.restoreState(self.obj, state)
+        size = state.shape[0]
+        return nes_lib.restoreState(self.obj, as_ctypes(state), size)
 
     def cloneSystemState(self):
         """This makes a copy of the system & environment state, suitable for

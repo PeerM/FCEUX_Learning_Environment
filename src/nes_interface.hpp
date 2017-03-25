@@ -107,7 +107,7 @@ class NESInterface {
         void saveState();
 
         int cloneState( unsigned char *buf );
-        //void restoreState(const void* state_buf);
+        bool restoreState(unsigned char *buf, int size);
 
         /** Restores a previously saved state of the emulator system,
             returns false if no such state exists (and makes no changes

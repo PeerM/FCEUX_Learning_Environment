@@ -51,6 +51,7 @@ extern "C" {
         bool loadState(nes::NESInterface *nes);
 
         int cloneState(nes::NESInterface *nes, unsigned char *buf);
+        bool restoreState(nes::NESInterface *nes, unsigned char *buf, int size);
 
         void getSnapshot(nes::NESInterface *nes, char *snapshot);
 

@@ -91,7 +91,7 @@ class NESInterface::Impl {
         bool loadState();
 
         int cloneState( unsigned char *buf);
-        //void restoreState(const void* state_buf);
+        bool restoreState(unsigned char *buf, int size);
 
         // Gets current state as string
         void getSnapshot(const std::string snapshot);
@@ -179,8 +179,6 @@ void NESInterface::Impl::saveState() {
 	printf("saveState NOT IMPLEMENTED.\n");
 	//		FCEUD_SaveStateAs ();
 }
-//        const void* cloneState();
-//        void restoreState(const void* state_buf);
 
 int NESInterface::Impl::cloneState( unsigned char *buf ) {
     std::vector<u8> byteVector;
@@ -197,11 +195,15 @@ int NESInterface::Impl::cloneState( unsigned char *buf ) {
     return 0;
 }
 
-//void NESInterface::Impl::restoreState( unsigned char *buf ) {
-//	// TODO implement
-//	printf("saveState NOT IMPLEMENTED.\n");
-//	//		FCEUD_SaveStateAs ();
-//}
+bool NESInterface::Impl::restoreState(unsigned char *buf, int size) {
+    std::vector<u8> byteVector(buf, buf + size);
+    EMUFILE *emuFile = new EMUFILE_MEMORY(&byteVector);
+
+    bool result = FCEUSS_LoadFP(emuFile, SSLOADPARAM_NOBACKUP);
+
+    delete emuFile;
+    return result;
+}
 
 // void getSnapshot(const std::string snapshot);
 void NESInterface::Impl::getSnapshot(const std::string snapshot) {
@@ -507,9 +509,9 @@ int NESInterface::cloneState( unsigned char *buf ){
     return m_pimpl->cloneState(buf);
 }
 
-//void NESInterface::restoreState(const void* state_buf){
-//    m_pimpl->restoreState(state_buf);
-//}
+bool NESInterface::restoreState(unsigned char *buf, int size){
+    return m_pimpl->restoreState(buf,size);
+}
 
 void NESInterface::getScreen(unsigned char *screen, int screen_size) {
          m_pimpl->getScreen(screen, screen_size);
