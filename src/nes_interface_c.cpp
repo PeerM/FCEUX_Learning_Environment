@@ -80,6 +80,10 @@ bool loadState(nes::NESInterface *nes) {
         return nes->loadState();
 }
 
+int cloneState(nes::NESInterface *nes, unsigned char *buf){
+        return nes->cloneState(buf);
+}
+
 void getSnapshot(nes::NESInterface *nes, char *snapshot) {
         nes->getSnapshot(snapshot);
 }

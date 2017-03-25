@@ -62,6 +62,9 @@ nes_lib.saveState.restype = None
 nes_lib.loadState.argtypes = [c_void_p]
 nes_lib.loadState.restype = c_bool
 
+nes_lib.cloneState.argtypes = [c_void_p, c_void_p]
+nes_lib.cloneState.restype = c_int
+
 nes_lib.delete_NES.argtypes = [c_void_p]
 nes_lib.delete_NES.restype = None
 
@@ -243,12 +246,20 @@ class NESInterface(object):
     def restoreShapshot(self, snapshot_name):
         return nes_lib.restoreSnapshot(self.obj, snapshot_name)
 
-    def cloneState(self):
+    def cloneState(self, buffer=None):
         """This makes a copy of the environment state. This copy does *not*
         include pseudorandomness, making it suitable for planning
         purposes. By contrast, see cloneSystemState.
         """
-        return nes_lib.cloneState(self.obj)
+        external_buffer = buffer is not None
+        if not external_buffer:
+            buffer = np.zeros(2 ** 17, np.uint8)
+        used_size = nes_lib.cloneState(self.obj, as_ctypes(buffer))
+
+        if not external_buffer:
+            return np.array(buffer[:used_size],dtype=np.uint8)
+        else:
+            return used_size
 
     def restoreState(self, state):
         """Reverse operation of cloneState(). This does not restore

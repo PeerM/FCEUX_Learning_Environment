@@ -6,6 +6,7 @@
 #include "cheat.h"
 #include "video.h"
 #include "state.h"
+#include "emufile.h"
 #include <stdio.h>
 #include <SDL/SDL.h>
 
@@ -88,6 +89,9 @@ class NESInterface::Impl {
 
         // Loads the state of the system
         bool loadState();
+
+        int cloneState( unsigned char *buf);
+        //void restoreState(const void* state_buf);
 
         // Gets current state as string
         void getSnapshot(const std::string snapshot);
@@ -175,6 +179,29 @@ void NESInterface::Impl::saveState() {
 	printf("saveState NOT IMPLEMENTED.\n");
 	//		FCEUD_SaveStateAs ();
 }
+//        const void* cloneState();
+//        void restoreState(const void* state_buf);
+
+int NESInterface::Impl::cloneState( unsigned char *buf ) {
+    std::vector<u8> byteVector;
+    EMUFILE *emuFile = new EMUFILE_MEMORY(&byteVector);
+// 0 for no compression
+    if(FCEUSS_SaveMS(emuFile, 0)) {
+        std::copy(byteVector.begin(), byteVector.end(), buf);
+        delete emuFile;
+        return byteVector.size();
+
+    }
+
+    delete emuFile;
+    return 0;
+}
+
+//void NESInterface::Impl::restoreState( unsigned char *buf ) {
+//	// TODO implement
+//	printf("saveState NOT IMPLEMENTED.\n");
+//	//		FCEUD_SaveStateAs ();
+//}
 
 // void getSnapshot(const std::string snapshot);
 void NESInterface::Impl::getSnapshot(const std::string snapshot) {
@@ -475,6 +502,14 @@ void NESInterface::getSnapshot(const std::string snapshot) {
 void NESInterface::restoreSnapshot(const std::string snapshot) {
     m_pimpl->restoreSnapshot(snapshot);
 }
+
+int NESInterface::cloneState( unsigned char *buf ){
+    return m_pimpl->cloneState(buf);
+}
+
+//void NESInterface::restoreState(const void* state_buf){
+//    m_pimpl->restoreState(state_buf);
+//}
 
 void NESInterface::getScreen(unsigned char *screen, int screen_size) {
          m_pimpl->getScreen(screen, screen_size);
