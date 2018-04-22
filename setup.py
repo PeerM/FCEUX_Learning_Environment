@@ -8,7 +8,7 @@ if not os.path.isfile(nes_c_lib):
   sys.exit()
 
 setup(name = 'nes_python_interface',
-      version='0.0.8',
+      version='0.0.9',
       description = 'FCEUX Learning Environment Python Interface',
       url='https://github.com/PeerM/FCEUX_Learning_Environment',
       author='Ben Goodrich, Ehren J. Brav, F. Mathia',

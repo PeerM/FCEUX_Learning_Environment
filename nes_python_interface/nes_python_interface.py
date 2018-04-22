@@ -2,7 +2,6 @@
 # Author: Ben Goodrich, Ehren J. Brav
 # This partially implements a python version of the arcade learning
 # environment interface.
-__all__ = ['NESInterface']
 
 from ctypes import *
 import numpy as np
